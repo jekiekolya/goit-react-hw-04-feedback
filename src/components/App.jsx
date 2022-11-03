@@ -1,61 +1,58 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { Box } from './Box';
 
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
 import { Statistics } from './Statistics/Statistics';
 import { Section } from './Section/Section';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const countTotalFeedback = () => {
+    return good + neutral + bad;
   };
 
-  countTotalFeedback = () => {
-    return Object.values(this.state).reduce(
-      (acc, item) => (acc = acc + item),
-      0
-    );
-  };
-
-  countPositiveFeedbackPercentage = () => {
-    const { good, neutral, bad } = this.state;
-    const total = good + neutral + bad;
+  const countPositiveFeedbackPercentage = () => {
+    const total = countTotalFeedback();
     return Math.round((good / total) * 100);
   };
 
-  onLeaveFeedback = e => {
+  const onLeaveFeedback = e => {
     const option = e.target.getAttribute('name').toLowerCase();
 
-    // add effect after click button
-    e.target.classList.add('click');
-    setTimeout(() => {
-      e.target.classList.remove('click');
-    }, 100);
+    switch (option) {
+      case 'good':
+        setGood(good + 1);
+        break;
+      case 'neutral':
+        setNeutral(neutral + 1);
+        break;
+      case 'bad':
+        setBad(bad + 1);
+        break;
 
-    this.setState(prevState => {
-      return { [option]: prevState[option] + 1 };
-    });
+      default:
+        break;
+    }
   };
 
-  render() {
-    return (
-      <Box bg="mainBg" color="text">
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={Object.keys(this.state)}
-            onLeaveFeedback={this.onLeaveFeedback}
-          />
-          <Statistics
-            good={this.state.good}
-            neutral={this.state.neutral}
-            bad={this.state.bad}
-            total={this.countTotalFeedback()}
-            positivePercentage={this.countPositiveFeedbackPercentage()}
-          />
-        </Section>
-      </Box>
-    );
-  }
+  return (
+    <Box bg="mainBg" color="text">
+      <Section title="Please leave feedback">
+        <FeedbackOptions
+          options={['good', 'neutral', 'bad']}
+          onLeaveFeedback={onLeaveFeedback}
+        />
+        <Statistics
+          good={good}
+          neutral={neutral}
+          bad={bad}
+          total={countTotalFeedback()}
+          positivePercentage={countPositiveFeedbackPercentage()}
+        />
+      </Section>
+    </Box>
+  );
 }

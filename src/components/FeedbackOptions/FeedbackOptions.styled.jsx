@@ -6,8 +6,7 @@ export const Button = styled.button`
   border: 1px solid ${p => p.theme.colors.border};
   border-radius: 3px;
   cursor: pointer;
-
-  &&.click {
+  &&:active {
     background-color: ${p => p.theme.colors.accent};
   }
 `;
